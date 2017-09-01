@@ -5,18 +5,19 @@ var WIDTH = cvs.clientWidth,
 cvs.width = WIDTH;
 cvs.height = HEIGHT;
 var SIZE_WIDTH = ~~(WIDTH / 4),
-    SIZE_HEIGHT = HEIGHT / 5;
+    SIZE_HEIGHT = ~~(HEIGHT / 5);
 var luckList = [];
 var cvs_translate = 0;
 var timer;
-var SPEED = 10;
+var SPEED = 5;
 
 function init () {
     for (var i = 0; i < 6; i++) {
         createLuck();
     }
     ctx.save();
-    drawAll();
+    // drawAll();
+    timer = requestAnimationFrame(ani);
 }
 init();
 
@@ -68,7 +69,7 @@ function touchOrClick (e) {
     if (y == 0) {
         if (x == luckList[y]) {
             drawBlock(x, y, '#666');
-            timer = requestAnimationFrame(ani);
+            // timer = requestAnimationFrame(ani);
         } else {
             drawBlock(x, y, '#f00');
         }
@@ -76,16 +77,16 @@ function touchOrClick (e) {
 }
 function ani(timestamp) {
     drawAll();
-    cvs_translate += SPEED;
     if (cvs_translate >= SIZE_HEIGHT) {
-        cancelAnimationFrame(timer);
+        // cancelAnimationFrame(timer);
         ctx.restore();
         cvs_translate = 0;
         ctx.save();
         luckList.shift();
         createLuck();
     } else {
+        cvs_translate += SPEED;
         ctx.translate(0, SPEED);
-        timer = requestAnimationFrame(ani);
     }
+    timer = requestAnimationFrame(ani);
 }

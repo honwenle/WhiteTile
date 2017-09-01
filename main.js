@@ -6,20 +6,23 @@ cvs.width = WIDTH;
 cvs.height = HEIGHT;
 var SIZE_WIDTH = ~~(WIDTH / 4),
     SIZE_HEIGHT = HEIGHT / 5;
-var luckList = {};
+var luckList = [];
+var cvs_translate = 0;
+var timer;
+var SPEED = 5;
 
 function init () {
     for (var i = 0; i < 6; i++) {
-        createLuck(i);
+        createLuck();
     }
-    // requestAnimationFrame(ani);
+    ctx.save();
     drawAll();
 }
 init();
 
 function drawBlock (x, y, c) {
     ctx.fillStyle = c || '#fff';
-    ctx.fillRect(x * SIZE_WIDTH + x, y * SIZE_HEIGHT + 1, SIZE_WIDTH, SIZE_HEIGHT - 1);
+    ctx.fillRect(x * SIZE_WIDTH + x, (4 - y) * SIZE_HEIGHT + 1, SIZE_WIDTH, SIZE_HEIGHT - 1);
 }
 function drawRow (y) {
     ctx.beginPath();
@@ -41,8 +44,8 @@ function drawAll() {
         drawRow(i);
     }
 }
-function createLuck(y) {
-    luckList[y] = ~~(Math.random() * 4);
+function createLuck() {
+    luckList.push(~~(Math.random() * 4));
 }
 // 画竖线
 function drawColLine () {
@@ -61,15 +64,26 @@ function touchOrClick (e) {
     var x = e.touches[0].clientX,
         y = e.touches[0].clientY;
     x = ~~(x/SIZE_WIDTH);
-    y = ~~(y/SIZE_HEIGHT);
+    y = 4 - ~~(y/SIZE_HEIGHT);
     if (x == luckList[y]) {
         drawBlock(x, y, '#666');
+        timer = requestAnimationFrame(ani);
     } else {
         drawBlock(x, y, '#f00');
     }
 }
 function ani(timestamp) {
     drawAll();
-    ctx.translate(0, 1);
-    requestAnimationFrame(ani);
+    cvs_translate += SPEED;
+    if (cvs_translate >= SIZE_HEIGHT) {
+        cancelAnimationFrame(timer);
+        ctx.restore();
+        cvs_translate = 0;
+        ctx.save();
+        luckList.shift();
+        createLuck();
+    } else {
+        ctx.translate(0, SPEED);
+        timer = requestAnimationFrame(ani);
+    }
 }

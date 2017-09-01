@@ -9,7 +9,7 @@ var SIZE_WIDTH = ~~(WIDTH / 4),
 var luckList = [];
 var cvs_translate = 0;
 var timer;
-var SPEED = 5;
+var SPEED = 10;
 
 function init () {
     for (var i = 0; i < 6; i++) {
@@ -65,11 +65,13 @@ function touchOrClick (e) {
         y = e.touches[0].clientY;
     x = ~~(x/SIZE_WIDTH);
     y = 4 - ~~(y/SIZE_HEIGHT);
-    if (x == luckList[y]) {
-        drawBlock(x, y, '#666');
-        timer = requestAnimationFrame(ani);
-    } else {
-        drawBlock(x, y, '#f00');
+    if (y == 0) {
+        if (x == luckList[y]) {
+            drawBlock(x, y, '#666');
+            timer = requestAnimationFrame(ani);
+        } else {
+            drawBlock(x, y, '#f00');
+        }
     }
 }
 function ani(timestamp) {

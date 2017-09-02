@@ -12,7 +12,8 @@ var cvs_translate = 0;
 var timer;
 var begin = false;
 var over = false;
-var SPEED = 2;
+var SPEED = 5;
+var score = 0;
 
 function init () {
     for (var i = 0; i < 6; i++) {
@@ -49,11 +50,11 @@ function drawAll() {
     for (var i = 0; i < 6; i++) {
         drawRow(i);
     }
+    drawScore();
 }
 function createLuck() {
     luckList.push(~~(Math.random() * 4));
 }
-// 画竖线
 function drawColLine () {
     ctx.beginPath();
     ctx.strokeStyle = '#000';
@@ -81,11 +82,19 @@ function touchOrClick (e) {
     if ((y == 0 && !doneList[0]) || (y > 0 && !doneList[y] && doneList[y-1])) {
         if (x == luckList[y]) {
             doneList.push(-1);
+            score++;
         } else {
             doneList.push(x+1);
             over = true;
         }
     }
+}
+function drawScore() {
+    ctx.fillStyle = '#f00';
+    ctx.font = 50 + 'px 微软雅黑';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(score, WIDTH/2, 10 - cvs_translate);
 }
 function ani(timestamp) {
     drawAll();
@@ -102,6 +111,7 @@ function ani(timestamp) {
         if (last != -1) {
             cancelAnimationFrame(timer);
         } else {
+            score % 50 || SPEED++;
             timer = requestAnimationFrame(ani);
         }
         createLuck();

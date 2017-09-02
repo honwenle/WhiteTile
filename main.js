@@ -90,6 +90,7 @@ function touchOrClick (e) {
 function ani(timestamp) {
     drawAll();
     if (over) {
+        cancelAnimationFrame(timer);
         return false;
     }
     if (cvs_translate >= SIZE_HEIGHT) {
@@ -100,7 +101,6 @@ function ani(timestamp) {
         var last = doneList.shift();
         if (last != -1) {
             cancelAnimationFrame(timer);
-            alert('gameover');
         } else {
             timer = requestAnimationFrame(ani);
         }

@@ -12,7 +12,7 @@ var cvs_translate = 0;
 var timer;
 var begin = false;
 var over = false;
-var SPEED = 5;
+var SPEED = 2;
 
 function init () {
     for (var i = 0; i < 6; i++) {
@@ -71,9 +71,9 @@ function touchOrClick (e) {
         return false;
     }
     var x = e.touches[0].clientX,
-        y = e.touches[0].clientY - cvs_translate;
+    y = e.touches[0].clientY - cvs_translate;
     x = ~~(x/SIZE_WIDTH);
-    y = 4 - ~~(y/SIZE_HEIGHT);
+    y = 4 - Math.floor(y/SIZE_HEIGHT);
     if (y == 0 && !begin) {
         timer = requestAnimationFrame(ani);
         begin = true;

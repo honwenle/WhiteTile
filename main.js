@@ -6,7 +6,8 @@ cvs.width = WIDTH;
 cvs.height = HEIGHT;
 var SIZE_WIDTH = ~~(WIDTH / 4),
     SIZE_HEIGHT = ~~(HEIGHT / 5);
-var luckList = [];
+var luckList = [],
+    doneList = [];
 var cvs_translate = 0;
 var timer;
 var SPEED = 5;
@@ -35,7 +36,10 @@ function drawRow (y) {
     ctx.stroke();
     var luck = luckList[y];
     for (var i = 0; i < 4; i++) {
-        drawBlock(i, y, i == luck && '#000');
+        drawBlock(i, y, i == luck && (doneList[y] == -1 ? '#666' : '#000'));
+    }
+    if (doneList[y] && doneList[y] != -1) {
+        drawBlock(doneList[y]-1, y, '#f00');
     }
 }
 function drawAll() {
@@ -63,15 +67,15 @@ function drawColLine () {
 cvs.addEventListener('touchstart', touchOrClick, false);
 function touchOrClick (e) {
     var x = e.touches[0].clientX,
-        y = e.touches[0].clientY;
+        y = e.touches[0].clientY - cvs_translate;
     x = ~~(x/SIZE_WIDTH);
     y = 4 - ~~(y/SIZE_HEIGHT);
-    if (y == 0) {
+    if ((y == 0 && !doneList[0]) || (y > 0 && !doneList[y] && doneList[y-1])) {
         if (x == luckList[y]) {
-            drawBlock(x, y, '#666');
+            doneList.push(-1);
             // timer = requestAnimationFrame(ani);
         } else {
-            drawBlock(x, y, '#f00');
+            doneList.push(x+1);
         }
     }
 }
@@ -83,10 +87,17 @@ function ani(timestamp) {
         cvs_translate = 0;
         ctx.save();
         luckList.shift();
+        var last = doneList.shift();
+        if (last != -1) {
+            cancelAnimationFrame(timer);
+            alert('gameover');
+        } else {
+            timer = requestAnimationFrame(ani);
+        }
         createLuck();
     } else {
         cvs_translate += SPEED;
         ctx.translate(0, SPEED);
+        timer = requestAnimationFrame(ani);
     }
-    timer = requestAnimationFrame(ani);
 }

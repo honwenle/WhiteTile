@@ -10,6 +10,8 @@ var luckList = [],
     doneList = [];
 var cvs_translate = 0;
 var timer;
+var begin = false;
+var over = false;
 var SPEED = 5;
 
 function init () {
@@ -17,8 +19,7 @@ function init () {
         createLuck();
     }
     ctx.save();
-    // drawAll();
-    timer = requestAnimationFrame(ani);
+    drawAll();
 }
 init();
 
@@ -66,23 +67,32 @@ function drawColLine () {
 }
 cvs.addEventListener('touchstart', touchOrClick, false);
 function touchOrClick (e) {
+    if (over) {
+        return false;
+    }
     var x = e.touches[0].clientX,
         y = e.touches[0].clientY - cvs_translate;
     x = ~~(x/SIZE_WIDTH);
     y = 4 - ~~(y/SIZE_HEIGHT);
+    if (y == 0 && !begin) {
+        timer = requestAnimationFrame(ani);
+        begin = true;
+    }
     if ((y == 0 && !doneList[0]) || (y > 0 && !doneList[y] && doneList[y-1])) {
         if (x == luckList[y]) {
             doneList.push(-1);
-            // timer = requestAnimationFrame(ani);
         } else {
             doneList.push(x+1);
+            over = true;
         }
     }
 }
 function ani(timestamp) {
     drawAll();
+    if (over) {
+        return false;
+    }
     if (cvs_translate >= SIZE_HEIGHT) {
-        // cancelAnimationFrame(timer);
         ctx.restore();
         cvs_translate = 0;
         ctx.save();

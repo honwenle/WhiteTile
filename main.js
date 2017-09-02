@@ -67,6 +67,9 @@ function drawColLine () {
     ctx.stroke();
 }
 cvs.addEventListener('touchstart', touchOrClick, false);
+cvs.addEventListener('touchmove', function (e) {
+    e.preventDefault()
+}, false);
 function touchOrClick (e) {
     e.preventDefault();
     if (over) {

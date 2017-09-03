@@ -106,7 +106,7 @@ function ani(timestamp) {
         cancelAnimationFrame(timer);
         return false;
     }
-    if (cvs_translate >= SIZE_HEIGHT) {
+    if (cvs_translate >= SIZE_HEIGHT-5) {
         ctx.restore();
         cvs_translate = 0;
         ctx.save();
